@@ -396,3 +396,63 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Directorios de build
+/bin/
+/obj/
+
+# Archivos generados por el sistema
+*.log
+*.tmp
+
+# Archivos de configuración del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de paquetes de NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+
+# Directorio de paquetes NuGet
+/packages/
+
+# Archivos de configuración del entorno de desarrollo
+*.user
+*.suo
+*.userosscache
+*.suo
+*.tmp
+*.log
+
+# Archivos de configuración de Rider
+.idea/
+
+# Archivos de configuración de Visual Studio Code
+.vscode/
+
+# Archivos de configuración de Visual Studio
+*.csproj.user
+*.suo
+*.user
+*.userosscache
+*.suo
+*.ncb
+*.sdf
+*.opensdf
+*.vcxproj.*
+*.pdb
+*.ipch
+*.obj
+*.tmp
+*.bak
+*.swp
+
+# Archivos generados por MSBuild
+*.g.cs
+*.g.i.cs
+*.g.vb
+*.g.i.vb
+*.g.vb
+*.designer.cs
+*.designer.vb

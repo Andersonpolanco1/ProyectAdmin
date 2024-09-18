@@ -16,4 +16,42 @@ Puedes instalar estos paquetes ejecutando los siguientes comandos en la raíz de
 dotnet add package Microsoft.EntityFrameworkCore.Tools
 dotnet add package Microsoft.EntityFrameworkCore.Design
 dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+```
+
+## Configuración en `appsettings.json`
+
+Para configurar la cadena de conexión a la base de datos, asegúrate de que tu archivo `appsettings.json` contenga la siguiente configuración:
+
+```json
+{
+...
+  "ConnectionStrings": {
+    "DefaultConnection": "Agrega aqui tu cadena de conexión"
+  },
+...
+}
+```
+
+## Ejecutar las Migraciones
+
+Para asegurarte de que la base de datos esté actualizada con las últimas migraciones, sigue estos pasos:
+
+### 1. Agregar una Migración Inicial
+
+Primero, debes agregar una migración inicial que refleje el esquema actual de tu modelo de datos en la base de datos. Ejecuta el siguiente comando desde la raíz de tu solución:
+
+```bash
+dotnet ef migrations add InitialCreate --project ProyectAdmin.Infrastructure --startup-project ProyectAdmin.Web
+```
+
+### 2. Aplicar las Migraciones a la Base de Datos
+
+Una vez que hayas creado la migración, debes aplicarla a la base de datos para que el esquema se actualice. Ejecuta el siguiente comando:
+
+
+```bash
+dotnet ef database update --project ProyectAdmin.Infrastructure --startup-project ProyectAdmin.Web
+```
+
+
 

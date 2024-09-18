@@ -3,7 +3,8 @@ using Microsoft.Extensions.Logging;
 using ProyectAdmin.Core.Models;
 using ProyectAdmin.Core.Interfaces;
 using System.Linq.Expressions;
-using System.Text.RegularExpressions;
+using ProyectAdmin.Core.DTOs.Filters;
+using ProyectAdmin.Core.Utils;
 
 namespace ProyectAdmin.Infrastructure.Repositories
 {
@@ -59,16 +60,6 @@ namespace ProyectAdmin.Infrastructure.Repositories
             return await query.Where(predicate).ToListAsync();
         }
 
-        public async Task<User?> FirstAsync(Expression<Func<User, bool>> predicate, bool asNoTracking = false)
-        {
-            IQueryable<User> query = _context.Users;
-
-            if (asNoTracking)
-                query = query.AsNoTracking();
-
-            return await query.FirstOrDefaultAsync(predicate);
-        }
-
         public async Task<bool> ExistAsync(Expression<Func<User, bool>> predicate, bool asNoTracking = false)
         {
             IQueryable<User> query = _context.Users;
@@ -81,12 +72,7 @@ namespace ProyectAdmin.Infrastructure.Repositories
             return user != null;
         }
 
-        public Task<IEnumerable<User>> GetAllAsync(bool asNoTracking = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<User> GetByIdAsync(int id, bool asNoTracking = false)
+        public async Task<User?> GetByIdAsync(int id, bool asNoTracking = false)
         {
             IQueryable<User> query = _context.Users;
 
@@ -96,9 +82,37 @@ namespace ProyectAdmin.Infrastructure.Repositories
             return await query.FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public System.Threading.Tasks.Task UpdateAsync(User entity, bool SaveChanges = true)
+        public async Task<PaginatedList<User>> FindAsync(BaseFilter filter, bool paginated = false, bool asNoTracking = true)
         {
-            throw new NotImplementedException();
+            IQueryable<User> usersQuery = _context.Users;
+
+            if (filter is UserFilter userFilter)
+            {
+                if (asNoTracking)
+                    usersQuery = usersQuery.AsNoTracking().AsQueryable();
+
+                if (userFilter.Id.HasValue)
+                    usersQuery = usersQuery.Where(u => u.Id == userFilter.Id);
+
+                if (!string.IsNullOrWhiteSpace(userFilter.Name))
+                    usersQuery = usersQuery.Where(u => u.Name == userFilter.Name);
+
+                if (!string.IsNullOrWhiteSpace(userFilter.Email))
+                    usersQuery = usersQuery.Where(u => u.Email == userFilter.Email);
+
+                if (!string.IsNullOrEmpty(userFilter.OrderBy))
+                {
+                    usersQuery = filter.SortOrder == SortOrder.Asc
+                        ? usersQuery.OrderBy(e => EF.Property<object>(e, userFilter.OrderBy))
+                        : usersQuery.OrderByDescending(e => EF.Property<object>(e, userFilter.OrderBy));
+                }
+            }
+
+            var data = await PaginatedList<User>.CreateAsync(usersQuery, filter.PageIndex, filter.PageSize);
+
+            return data;
         }
+
+        public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
     }
 }

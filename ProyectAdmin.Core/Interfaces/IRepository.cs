@@ -1,17 +1,27 @@
-﻿using ProyectAdmin.Core.Models;
+﻿using ProyectAdmin.Core.Utils;
+using ProyectAdmin.Core.DTOs.Filters;
+using ProyectAdmin.Core.Models;
 using System.Linq.Expressions;
 
 namespace ProyectAdmin.Core.Interfaces
 {
     public interface IRepository<T> where T : class
     {
-        Task<T> GetByIdAsync(int id, bool asNoTracking = false);
-        Task<IEnumerable<T>> GetAllAsync(bool asNoTracking = false);
+        Task<T?> GetByIdAsync(int id, bool asNoTracking = false);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, bool asNoTracking = false);
         Task<bool> ExistAsync(Expression<Func<T, bool>> predicate, bool asNoTracking = false);
-        Task<T?> FirstAsync(Expression<Func<T, bool>> predicate, bool asNoTracking = false);
+
+
+        /// <summary>
+        /// Intenta agregar una nueva entidad.
+        /// </summary>
+        /// <typeparam name="T">El tipo de la entidad que se está agregando.</typeparam>
+        /// <param name="entity">Entidad para ser agregada.</param>
+        /// <param name="SaveChanges">Parámetro opcional para guardar cambios inmediatamente.</param>
+        /// <returns>
+        /// La entidad agregada de tipo <typeparamref name="T"/> con su ID asignado.
+        /// </returns>
         Task<T> AddAsync(T entity, bool SaveChanges = true);
-        System.Threading.Tasks.Task UpdateAsync(T entity, bool SaveChanges = true);
 
         /// <summary>
         /// Intenta eliminar una entidad buscando por su ID.
@@ -22,5 +32,8 @@ namespace ProyectAdmin.Core.Interfaces
         /// </returns>
         Task<bool> DeleteAsync(int id, bool SaveChanges = true);
 
+        Task<PaginatedList<T>> FindAsync(BaseFilter filters, bool paginated = false, bool asNoTracking = true);
+
+        Task<int> SaveChangesAsync();
     }
 }

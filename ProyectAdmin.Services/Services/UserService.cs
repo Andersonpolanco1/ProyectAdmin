@@ -1,6 +1,8 @@
 ﻿
+using ProyectAdmin.Core.Utils;
 using Microsoft.AspNetCore.Identity;
 using ProyectAdmin.Core.DTOs;
+using ProyectAdmin.Core.DTOs.Filters;
 using ProyectAdmin.Core.Exceptions.Infrastructure;
 using ProyectAdmin.Core.Interfaces;
 using ProyectAdmin.Core.Models;
@@ -15,9 +17,10 @@ namespace ProyectAdmin.Services.Services
         public async Task<User> AddAsync(UserCreateDto createDto)
         {
             var userExist =
-                await _userRepository.ExistAsync(u => u.Name.ToUpper() == createDto.Name.ToUpper()
-                || u.Email.ToUpper() == createDto.Email.ToUpper(), true);
-
+                await _userRepository.ExistAsync(u => 
+                u.Name.Equals(createDto.Name, StringComparison.CurrentCultureIgnoreCase) ||
+                u.Email.Equals(createDto.Email, StringComparison.CurrentCultureIgnoreCase),
+                asNoTracking:true);
 
             if (userExist)
                 throw new EntityExistsException();
@@ -30,6 +33,18 @@ namespace ProyectAdmin.Services.Services
             };
 
             return await _userRepository.AddAsync(newUser);
+        }
+
+        public async Task<PaginatedList<User>> GetUsers(UserFilter filter)
+        {
+            try
+            {
+                return await _userRepository.FindAsync(filter);
+            }
+            catch (Exception ex)
+            {
+                throw new FilterException(ex.Message);
+            }
         }
     }
 }

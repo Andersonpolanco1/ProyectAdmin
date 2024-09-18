@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ProyectAdmin.Core.DTOs
 {
     public class UserCreateDto
     {
         [Required]
-        [StringLength(100, ErrorMessage ="El nombre de usuario debe tener al menos 6 caracteres", MinimumLength = 6)] // Valida la longitud del campo
-        public string Name { get; set; }
+        [StringLength(100, ErrorMessage ="El nombre de usuario debe tener al menos 6 caracteres", MinimumLength = 6)] 
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         [PasswordComplexity(MinimumLength = 8)]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
     }
 }

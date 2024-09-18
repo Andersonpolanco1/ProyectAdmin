@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectAdmin.Core.ActionFilters;
+using ProyectAdmin.Core.DTOs.Filters;
 using ProyectAdmin.Core.Interfaces;
 using ProyectAdmin.Core.Models;
 using ProyectAdmin.Infrastructure;
@@ -18,7 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IRepository<User>,UsersRepository>();
+builder.Services.AddScoped<IRepository<User,UserFilter>,UsersRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services

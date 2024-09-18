@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProyectAdmin.Core.DTOs;
 using ProyectAdmin.Core.Utils;
 
 namespace ProyectAdmin.Core.ActionFilters
@@ -8,8 +9,8 @@ namespace ProyectAdmin.Core.ActionFilters
     {
         public async Task ExecuteResultAsync(ActionContext context)
         {
-            var erors = ModelStateMap.MapModelStateToValidationErrorResponse(context.ModelState);
-            var objectResult = new ObjectResult(erors) { StatusCode = StatusCodes.Status400BadRequest };
+            var response = ApiResponseHelper.CreateValidationErrorResponse<object>(context.ModelState, StatusCodes.Status400BadRequest);
+            var objectResult = new ObjectResult(response) { StatusCode = StatusCodes.Status400BadRequest };
             await objectResult.ExecuteResultAsync(context);
         }
     }

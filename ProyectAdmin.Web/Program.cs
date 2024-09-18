@@ -1,20 +1,28 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProyectAdmin.Core.ActionFilters;
+using ProyectAdmin.Core.Interfaces;
+using ProyectAdmin.Core.Models;
 using ProyectAdmin.Infrastructure;
-using System;
+using ProyectAdmin.Infrastructure.Repositories;
+using ProyectAdmin.Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IRepository<User>,UsersRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services
+    .Configure<ApiBehaviorOptions>(x => x.InvalidModelStateResponseFactory = ctx => new ValidationProblemDetailsResult());
 
 var app = builder.Build();
 
@@ -24,6 +32,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseHostFiltering();
 
 app.UseHttpsRedirection();
 

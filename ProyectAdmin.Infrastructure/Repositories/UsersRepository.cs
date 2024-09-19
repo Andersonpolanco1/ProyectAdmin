@@ -95,16 +95,19 @@ namespace ProyectAdmin.Infrastructure.Repositories
                     usersQuery = usersQuery.Where(u => u.Id == userFilter.Id);
 
                 if (!string.IsNullOrWhiteSpace(userFilter.Name))
-                    usersQuery = usersQuery.Where(u => u.Name == userFilter.Name);
+                    usersQuery = usersQuery.Where(u => u.Name.StartsWith(userFilter.Name));
 
                 if (!string.IsNullOrWhiteSpace(userFilter.Email))
-                    usersQuery = usersQuery.Where(u => u.Email == userFilter.Email);
+                    usersQuery = usersQuery.Where(u => u.Email.ToLower() == userFilter.Email.ToLower());
 
                 if (!string.IsNullOrEmpty(userFilter.OrderBy))
                 {
+                    if (!AppUtils.HasProperty<User>(AppUtils.CapitalizeFirstLetter(userFilter.OrderBy)))
+                        throw new ArgumentException($"La propiedad {userFilter.OrderBy} no existe, no se puede filtrar los registros.");
+
                     usersQuery = filter.SortOrder == SortOrder.Asc
-                        ? usersQuery.OrderBy(e => EF.Property<object>(e, userFilter.OrderBy))
-                        : usersQuery.OrderByDescending(e => EF.Property<object>(e, userFilter.OrderBy));
+                        ? usersQuery.OrderBy(e => EF.Property<object>(e, AppUtils.CapitalizeFirstLetter(userFilter.OrderBy)))
+                        : usersQuery.OrderByDescending(e => EF.Property<object>(e, AppUtils.CapitalizeFirstLetter(userFilter.OrderBy)));
                 }
             }
 

@@ -7,7 +7,8 @@ namespace ProyectAdmin.Core.Interfaces
 {
     public interface IUserService
     {
-        Task<User> AddAsync(UserCreateDto createDto);
-        Task<PaginatedList<User>> GetUsers(UserFilter filter);
+        Task<User> AddAsync(UserCreateDto createDto, bool saveChanges = true);
+        Task<PaginatedList<User>> GetUsers(UserFilter filter, bool asNoTracking = true);
+        Task<int> SaveChangesAsync();
     }
 }

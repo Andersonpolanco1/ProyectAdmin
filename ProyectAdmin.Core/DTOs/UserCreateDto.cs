@@ -9,7 +9,7 @@ namespace ProyectAdmin.Core.DTOs
         public string Name { get; set; } = string.Empty;
 
         [Required]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage ="Debe ser un correo en un formato válido.")]
         public string Email { get; set; } = string.Empty;
 
         [Required]

@@ -14,13 +14,13 @@ namespace ProyectAdmin.Services.Services
         private readonly IRepository<User> _userRepository = userRepository;
         private readonly PasswordHasher<UserCreateDto> _passwordHasher = new();
 
-        public async Task<User> AddAsync(UserCreateDto createDto)
+        public async Task<User> AddAsync(UserCreateDto createDto, bool saveChanges = true)
         {
-            var userExist =
-                await _userRepository.ExistAsync(u => 
-                u.Name.Equals(createDto.Name, StringComparison.CurrentCultureIgnoreCase) ||
-                u.Email.Equals(createDto.Email, StringComparison.CurrentCultureIgnoreCase),
-                asNoTracking:true);
+            var userExist = await _userRepository.ExistAsync(u =>
+                u.Name.ToLower() == createDto.Name.ToLower() ||
+                u.Email.ToLower() == createDto.Email.ToLower(),
+                asNoTracking: true
+            );
 
             if (userExist)
                 throw new EntityExistsException();
@@ -32,18 +32,34 @@ namespace ProyectAdmin.Services.Services
                 Password = _passwordHasher.HashPassword(createDto, createDto.Password)
             };
 
-            return await _userRepository.AddAsync(newUser);
+            return await _userRepository.AddAsync(newUser, saveChanges);
         }
 
-        public async Task<PaginatedList<User>> GetUsers(UserFilter filter)
+        public async Task<PaginatedList<User>> GetUsers(UserFilter filter, bool asNoTracking = true)
         {
             try
             {
-                return await _userRepository.FindAsync(filter);
+                return await _userRepository.FindAsync(filter, asNoTracking);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new FilterException(ex.Message);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            try
+            {
+                return await _userRepository.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                throw new FilterException(ex.Message);
+                throw new SaveChangesException(ex.Message);
             }
         }
     }

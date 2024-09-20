@@ -1,6 +1,6 @@
-﻿namespace ProyectAdmin.Core.DTOs.Filters
+﻿namespace ProyectAdmin.Core.DTOs.QueryFilters
 {
-    public class UserFilter :BaseFilter
+    public class UserQueryFilter :BaseQueryFilter
     {
         public int? Id { get; set; }
         public string? Name { get; set; }

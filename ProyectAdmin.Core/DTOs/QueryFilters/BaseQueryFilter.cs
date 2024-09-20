@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace ProyectAdmin.Core.DTOs.Filters
+namespace ProyectAdmin.Core.DTOs.QueryFilters
 {
-    public abstract class BaseFilter
+    public abstract class BaseQueryFilter
     {
         private const int DEFAULT_PAGE_SIZE = 15;
         private const int DEFAULT_PAGE_INDEX = 1;
@@ -16,11 +16,11 @@ namespace ProyectAdmin.Core.DTOs.Filters
         public string? OrderBy { get; set; }
         public SortOrder? SortOrder { get; set; } 
 
-        protected BaseFilter()
+        protected BaseQueryFilter()
         {
             PageIndex = DEFAULT_PAGE_INDEX;
             PageSize = DEFAULT_PAGE_SIZE;
-            SortOrder = Filters.SortOrder.Asc;
+            SortOrder = QueryFilters.SortOrder.Asc;
         }
     }
 

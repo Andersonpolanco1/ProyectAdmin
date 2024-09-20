@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProyectAdmin.Core.DTOs;
 using ProyectAdmin.Core.DTOs.ApiResponse;
-using ProyectAdmin.Core.DTOs.Filters;
+using ProyectAdmin.Core.DTOs.Models.User;
+using ProyectAdmin.Core.DTOs.QueryFilters;
 using ProyectAdmin.Core.Exceptions.Infrastructure;
 using ProyectAdmin.Core.Interfaces;
 using ProyectAdmin.Core.Models;
 using ProyectAdmin.Core.Utils;
-using ProyectAdmin.Services.Services;
 using System.Text.Json;
 
 namespace ProyectAdmin.Web.Controllers
@@ -22,7 +21,7 @@ namespace ProyectAdmin.Web.Controllers
         [ProducesResponseType(typeof(ApiResponseOk<PaginatedList<User>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseError<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetUsers([FromQuery] UserFilter filtro)
+        public async Task<IActionResult> GetUsers([FromQuery] UserQueryFilter filtro)
         {
             try
             {
@@ -31,7 +30,7 @@ namespace ProyectAdmin.Web.Controllers
             }
             catch (FilterException ex)
             {
-                return BadRequest(ApiResponseHelper.CreateErrorResponse<UserFilter>(ex.Message, StatusCodes.Status400BadRequest));
+                return BadRequest(ApiResponseHelper.CreateErrorResponse<UserQueryFilter>(ex.Message, StatusCodes.Status400BadRequest));
             }
             catch(Exception ex)
             {
@@ -64,13 +63,13 @@ namespace ProyectAdmin.Web.Controllers
                 string jsonFilePath = "C:\\Users\\Andy\\Downloads\\MOCK_DATA.json";
                 var jsonData = await System.IO.File.ReadAllTextAsync(jsonFilePath);
 
-                // Deserializar el archivo JSON
                 var users = JsonSerializer.Deserialize<List<UserCreateDto>>(jsonData);
 
+                if (users == null || users.Count == 0)
+                    return Ok("Sin registros para procesar");
+
                 foreach (var user in users)
-                {
                     await _userService.AddAsync(user, saveChanges:false);
-                }
 
                 var data = new
                 {

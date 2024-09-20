@@ -1,5 +1,4 @@
-﻿
-namespace ProyectAdmin.Core.DTOs
+﻿namespace ProyectAdmin.Core.DTOs.ApiResponse
 {
     public class ValidationErrorResponse
     {

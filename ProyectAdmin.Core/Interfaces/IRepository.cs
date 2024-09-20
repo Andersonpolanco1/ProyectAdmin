@@ -1,5 +1,5 @@
 ﻿using ProyectAdmin.Core.Utils;
-using ProyectAdmin.Core.DTOs.Filters;
+using ProyectAdmin.Core.DTOs.QueryFilters;
 using ProyectAdmin.Core.Models;
 using System.Linq.Expressions;
 
@@ -32,8 +32,9 @@ namespace ProyectAdmin.Core.Interfaces
         /// </returns>
         Task<bool> DeleteAsync(int id, bool SaveChanges = true);
 
-        Task<PaginatedList<T>> FindAsync(BaseFilter filters, bool paginated = false, bool asNoTracking = true);
+        Task<PaginatedList<T>> FindAsync(BaseQueryFilter filters, bool paginated = false, bool asNoTracking = true);
 
         Task<int> SaveChangesAsync();
+        Task<User?> GetByEmail(string email);
     }
 }

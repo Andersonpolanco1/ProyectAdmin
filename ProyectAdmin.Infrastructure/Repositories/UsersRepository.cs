@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using ProyectAdmin.Core.Models;
 using ProyectAdmin.Core.Interfaces;
 using System.Linq.Expressions;
-using ProyectAdmin.Core.DTOs.Filters;
+using ProyectAdmin.Core.DTOs.QueryFilters;
 using ProyectAdmin.Core.Utils;
 
 namespace ProyectAdmin.Infrastructure.Repositories
@@ -82,11 +82,11 @@ namespace ProyectAdmin.Infrastructure.Repositories
             return await query.FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task<PaginatedList<User>> FindAsync(BaseFilter filter, bool paginated = false, bool asNoTracking = true)
+        public async Task<PaginatedList<User>> FindAsync(BaseQueryFilter filter, bool paginated = false, bool asNoTracking = true)
         {
             IQueryable<User> usersQuery = _context.Users;
 
-            if (filter is UserFilter userFilter)
+            if (filter is UserQueryFilter userFilter)
             {
                 if (asNoTracking)
                     usersQuery = usersQuery.AsNoTracking().AsQueryable();
@@ -117,5 +117,10 @@ namespace ProyectAdmin.Infrastructure.Repositories
         }
 
         public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
+
+        public async Task<User?> GetByEmail(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+        }
     }
 }
